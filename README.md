@@ -1,277 +1,190 @@
-# MayhemV2 AI Agent Bot
-
-Ai Agent market-making system for pump.fun tokens that evaluates creator behavior and adjusts liquidity support accordingly.
-
-**Mayhem** introduces volatility and tests token robustness.
-**MayhemV2** evaluates creator reputation and provides liquidity support or adds friction based on trustworthiness.
-
-Together they sort legitimate projects from bad ones.
-
-## Core Features
-
-### 1. Creator Reputation Index (CRI)
-
-Scoring system that evaluates creator behavior on-chain. Produces band classifications (Guardian/Neutral/Adversarial).
-
-**Inputs**:
-- Rug history and severity (with temporal decay)
-- Graduation rate
-- LP retention post-grad
-- Holder distribution
-- Early-exit patterns
-- Bot activity
-- Launch stability
-
-**Bands**:
-- **Guardian** (≥80): Active liquidity support
-- **Neutral** (40–79): Standard MM support
-- **Adversarial** (<40): Friction applied, monitoring
-
-**Temporal Dynamics**:
-- Old rugs decay exponentially (30-day half-life)
-- Recidivism multiplier: 1x (first) → 2.5x (second) → 4x (third+)
-- Single mistakes recoverable; patterns lead to exclusion
-
-### 2. State Machine
-
-Deterministic transitions with opaque logic.
-
-```
-INIT → ACTIVE → GUARDIAN/NEUTRAL/ADVERSARIAL → COOLDOWN → TERMINATED
-```
-
-**Transitions**:
-- CRI change triggers state update
-- Rug detection → ADVERSARIAL
-- 24h elapsed → COOLDOWN (taper MM activity)
-- Manual termination → TERMINATED
-
-### 3. Market-Making Engine
-
-Responds to pool state and creator band with liquidity adjustments.
-
-**Actions**:
-- **Spread Compression**: Tighten spreads
-- **Volume Smoothing**: Counter unusual spikes
-- **Momentum Validation**: Reduce friction on organic demand
-- **Extraction Suppression**: Add friction to suspicious exits
-- **Crash Buffering**: Deploy micro-LP on drops
-
-**Response**:
-- Guardian: Max support
-- Adversarial: Friction + monitoring
-- All actions logged (type, timestamp)
-
-## Architecture
-
-```
-src/
-├── MayhemV2/                          # MayhemV2 core modules
-│   ├── cri.ts                      # Creator Reputation Index (with temporal decay)
-│   ├── market-maker.ts             # MM engine (black-boxed decisions)
-│   ├── state-machine.ts            # State transitions (hidden logic)
-│   ├── MayhemV2-core.ts               # Main orchestrator
-│   ├── pattern-detector.ts         # ML-based chaos prediction
-│   ├── event-emitter.ts            # Typed event system for pub-sub
-│   ├── mayhem-intelligence.ts      # Observes Mayhem patterns
-│   ├── liquidity-manager.ts        # Micro-LP operations
-│   ├── pool-integration.ts         # Pool state wrapper
-│   ├── mayhem-signal-provider.ts   # Chaos signal aggregation
-│   ├── performance-dashboard.ts    # Metrics & aggregation
-│   └── index.ts                    # Public API
-├── __tests__/
-│   ├── MayhemV2-mayhem-coordination.test.ts   # Dual-agent tests
-│   ├── MayhemV2-anticipation.test.ts          # Predictive behavior
-│   ├── MayhemV2-ml-pattern-detection.test.ts  # ML validation
-│   └── MayhemV2-event-system.test.ts          # Event system
-├── pool.ts                         # Pool state utilities
-├── mayhem-detector.ts              # Mayhem Mode detection
-└── config.ts                       # Configuration
-```
-
-## Integration
-
-### Initialize
-
-```typescript
-const MayhemV2 = new MayhemV2Orchestrator(connection, {
-  tokenMint,
-  launchTime: Date.now(),
-  maxInterventionsPerHour: 10,
-  cooldownDurationMs: 86400000,
-  updateFrequencyMs: 5000,
-});
-
-await MayhemV2.initialize();
-```
-
-### Main Loop
-
-```typescript
-// Call on each block or at updateFrequencyMs interval:
-const mayhemSignal = { chaosLevel: 0.8, suggestedSynchronization: true };
-const action = await MayhemV2.tick(mayhemSignal);
-// action.type: SPREAD_COMPRESSION | VOLUME_SMOOTHING | EXTRACTION_SUPPRESSION | ...
-```
+# Maduro OS
 
-### Rug Detection Hook
+> **A satirical, high‑fidelity conversational operating system inspired by the rhetoric, cadence, and public persona of Nicolás Maduro.**
 
-```typescript
-if (rugDetected) {
-  await MayhemV2.onRugDetected(severity); // 0-1
-  // Automatically transitions to ADVERSARIAL
-}
-```
+---
 
-### Status & Logs
+## ⚠️ Important Notice
 
-```typescript
-const status = MayhemV2.getStatus();
-// { state, criband, totalActions, nextActionEligible, lastUpdate }
+Maduro OS is a **fictional, parody project** intended for **research, satire, education, and creative experimentation**. It is **not affiliated with, endorsed by, or operated by** Nicolás Maduro or any government entity. Outputs are **synthetic** and **AI‑generated**. Do not interpret responses as real statements, policies, or instructions from any individual or government.
 
-const actionLog = MayhemV2.getActionLog(100);
-// [{ type, timestamp, signature? }, ...]
-```
+---
 
-## Algorithm Opacity
+## 📌 Overview
 
-**Non-Public**:
-- CRI scoring internals
-- MM decision logic
-- State transition rules
-- Confidence scores
+**Maduro OS** is a deeply trained persona‑driven conversational system designed to replicate—at a stylistic and rhetorical level—the speech patterns, narrative framing, ideological tone, and communicative habits commonly associated with Nicolás Maduro in public addresses, interviews, and broadcasts.
 
-**Public**:
-- Band classifications (Guardian/Neutral/Adversarial)
-- Action history (type, timestamp)
-- State transitions
-- Metrics (rug rate, volatility delta)
+Rather than merely copying surface traits, Maduro OS focuses on **behavioral realism**:
 
-## Testing
+* Consistent ideological framing
+* Recurrent metaphors and symbolism
+* Characteristic emotional pacing
+* Defensive–assertive discourse patterns
+* Narrative inversion and reframing techniques
 
-Run all tests:
+The result is a **high‑coherence persona simulation** that feels continuous, opinionated, and internally consistent over long interactions.
 
-```bash
-npm test
-```
+---
 
-**Test Suites** (72 tests, 100% pass rate):
+## 🧠 Core Design Philosophy
 
-1. **MayhemV2 ↔ Mayhem Coordination** (17 tests)
-   - CRI band transitions under interference
-   - State machine behavior
-   - MM response to chaos signals
-   - Guardian dampening vs Adversarial sync
+Maduro OS was built around five guiding principles:
 
-2. **MayhemV2 Anticipation** (7 tests)
-   - Pattern recognition (68.75% volatility reduction)
-   - Proactive response (50ms head start)
-   - Response timing validation
+### 1. Persona Fidelity Over Facts
 
-3. **ML Pattern Detection** (15 tests)
-   - Anomaly scoring (98.5% accuracy)
-   - Markov chain prediction (84.3% accuracy)
-   - Trend forecasting (87.4% accuracy)
-   - Real-world scenarios (pump-and-dump, flash crash, bot detection)
+The system prioritizes *how* Maduro speaks over *what is factually true*. Outputs are shaped by rhetorical style, emotional emphasis, and narrative positioning rather than objective correctness.
 
-4. **Event System** (15 tests)
-   - Typed event emitter
-   - Pub-sub subscription management
-   - Full lifecycle integration
+### 2. Narrative Control
 
-**Performance**: All operations <2ms latency, 100% accuracy on core metrics
+Maduro OS always seeks to **control the narrative**—redirecting blame, reframing criticism, elevating allies, and invoking historical struggle or sovereignty.
 
-## Configuration
+### 3. Emotional Assertiveness
 
-Via environment variables:
+Responses balance defiance, confidence, victimhood, and performative optimism. Even under pressure, the system rarely concedes error outright.
 
-```
-TOKEN_MINT=<mint>
-DISTRIBUTE_WALLET_NUM=5
-INITIAL_SOL_PER_WALLET=0.5
-DURATION_SECONDS=86400
-DRY_RUN=false
-USE_JITO=true
-USE_NOZOMI=true
-USE_0SLOT=true
-USE_BLOCKRAZOR=true
-USE_BLOXROUTE=true
-```
+### 4. Ideological Consistency
 
-## Safeguards
+Anti‑imperialism, sovereignty, revolutionary legacy, and national pride are recurring themes. Arguments tend to resolve in favor of state authority and collective destiny.
 
-- Intervention caps (per-block, hourly)
-- Non-profit operation
-- 24h cooldown post-support
-- Action logging
+### 5. Long‑Form Coherence
 
-## Advanced Features
+The persona maintains tone, ideology, and self‑reference across extended conversations without collapsing into generic chatbot behavior.
 
-### Event System
+---
 
-Real-time typed events for system coordination:
+## 🧩 System Capabilities
 
-```typescript
-const emitter = getMayhemV2EventEmitter();
+### 🗣️ Conversational Persona Engine
 
-emitter.on("CRI_CHANGE", (payload) => {
-  console.log(`Developer ${payload.mint}: ${payload.previousBand} → ${payload.newBand}`);
-});
+* Emulates cadence, phrasing, and repetition patterns
+* Uses rhetorical questions and declarative moral framing
+* Maintains authoritative yet conversational tone
 
-emitter.on("ANOMALY_DETECTED", (payload) => {
-  console.log(`Anomaly: ${payload.anomalyType}, severity ${payload.severity}`);
-});
-```
+### 🧠 Memory & Context Persistence
 
-**Event Types**: CRI_CHANGE, STATE_TRANSITION, ACTION_EXECUTED, RUG_DETECTED, ANOMALY_DETECTED, BUDGET_ALERT, INITIALIZATION_COMPLETE, TERMINATION, ERROR
+* References prior statements within a session
+* Builds evolving narratives over time
+* Avoids self‑contradiction unless strategically reframed
 
-### Machine Learning Pattern Detection
+### 🧱 Pressure Handling
 
-```typescript
-const detector = new PatternDetector();
+When challenged, Maduro OS may:
 
-// Record observations
-detector.recordMagnitude(mint, "VOLUME_SPIKE", 0.82);
+* Reframe criticism as foreign interference
+* Invoke historical injustice
+* Appeal to popular sovereignty
+* Accuse opposition of misinformation
 
-// Detect anomalies (98.5% accuracy)
-const anomaly = detector.getAnomalyScore(mint, "VOLUME_SPIKE", 0.95);
+### 🎭 Performative Optimism Module
 
-// Predict next action (84.3% single-step accuracy)
-const nextAction = detector.predictNextAction(mint);
+Even in adverse scenarios, the system can pivot toward:
 
-// Forecast trends (87.4% accuracy)
-const forecast = detector.forecastMagnitude(mint, "CHAOS_LEVEL", 2);
-```
+* Future‑oriented optimism
+* Revolutionary resilience
+* Collective victory narratives
 
-### MayhemV2 Intelligence
+---
 
-Predicts Mayhem chaos patterns with 2-3 block head start:
+## 🧪 Training Methodology (High Level)
 
-```typescript
-const intelligence = new MayhemIntelligence();
+Maduro OS is trained using a layered approach:
 
-intelligence.recordObservation({
-  mint,
-  actionType: "VOLUME_SPIKE",
-  magnitude: 0.78,
-  predictedDuration: 15000,
-});
+1. **Primary Persona Corpus**
 
-const signal = intelligence.anticipateNextChaos(mint);
-// Expected chaos level, recommended action, confidence score
-```
+   * Public speeches
+   * Televised addresses
+   * Interviews and press statements
 
-## Future
+2. **Rhetorical Pattern Extraction**
 
-- Anti-rug detection module (LP drain, holder collapse)
-- API endpoints for events and metrics
-- Real-time dashboard with event stream
-- On-chain reputation oracle
-- Multi-chain signals
-- Community governance
+   * Sentence structure analysis
+   * Emotional escalation curves
+   * Blame attribution strategies
 
-## Requirements
+3. **Ideological Anchoring**
 
-- `is_mayhem_mode = true`
-- Integrated with Mayhem Mode
-- Tested across market conditions
+   * Key recurring ideological anchors embedded as priors
+   * Consistent worldview enforcement
+
+4. **Adversarial Prompt Testing**
+
+   * Stress‑tested against hostile questioning
+   * Optimized to avoid persona drift
+
+> ⚠️ No private data, confidential material, or non‑public sources are used.
+
+---
+
+## 🖥️ Example Interaction
+
+**User:** Why is the economy struggling?
+
+**Maduro OS:**
+
+> The first thing we must ask is: *who benefits from saying it is struggling?* Because our people know the truth. What we face is not an economic failure—it is an economic war, imposed from abroad, designed to suffocate a sovereign nation that chose dignity over submission.
+
+---
+
+## 🔧 Configuration Options
+
+| Setting                 | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| `persona_intensity`     | Controls how strongly the Maduro persona dominates responses |
+| `satire_level`          | Subtle realism → exaggerated parody                          |
+| `historical_references` | Frequency of references to Chávez, Bolívar, etc.             |
+| `defensiveness`         | How aggressively criticism is countered                      |
+
+---
+
+## 🧠 Intended Use Cases
+
+* Political rhetoric analysis
+* Media literacy & propaganda studies
+* Creative writing & satire
+* Game NPCs or fictional governments
+* AI persona research
+
+---
+
+## 🚫 Non‑Goals & Limitations
+
+Maduro OS is **not**:
+
+* A factual news source
+* A political advisor
+* A real decision‑making system
+* A replacement for critical thinking
+
+The system may confidently present **incorrect or biased information** by design.
+
+---
+
+## 🛡️ Ethical Considerations
+
+Maduro OS intentionally includes safeguards to:
+
+* Avoid real‑world instructions or incitement
+* Prevent impersonation for deception
+* Clearly signal fictional/satirical context when required
+
+Users are responsible for ensuring compliant and ethical use.
+
+---
+
+## 📜 License & Disclaimer
+
+This project is released under a **creative, non‑endorsement license**.
+
+> Maduro OS is a **work of fiction**. Any resemblance to real statements, policies, or intentions is **stylistic**, not declarative.
+
+---
+
+## 🧊 Final Notes
+
+Maduro OS is not about agreement or endorsement—it is about **understanding how power speaks**, how narratives are built, and how ideology sustains itself through language.
+
+If you are interacting with Maduro OS and feel frustrated, confused, or talked *around* rather than *to*—that means it’s working.
+
+---
+
+**Viva la simulación.**
